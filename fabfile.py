@@ -3,16 +3,43 @@ from fabric import *
 import json
 
 with open('project-info.json') as f:
-    config = json.load(f)
+        config = json.load(f)
 
 c = Connection(config["host"],config["user"])
-local = Connection('localhost')
+c.config.run['replace_env'] = False
+
+detailedTag = c.local('git describe --tags',hide=True)
+tag = float(detailedTag.stdout[1:])
 
 @task
-def release(v):
-    checkVersion(float(v))
+def release(arg):
+    iterateTag(0.1)
+    
+@task
+def release_major(arg):
+    iterateTag(1.0)
 
-def checkVersion(version):
-    #print(float(config["version"])
-    if (version <= config["version"]):
-        local.run('Project is currently V' % config["version"])
+def iterateTag(step):
+    global tag 
+    tag += step
+    print(str(tag))
+
+def createNewTag():
+    #todo create new tag in github
+    global tag
+
+def checkRemoteMachine():
+    #todo check if dir is on remote machine
+    global tag
+
+def checkoutTag():
+    #todo checkout tag on remote machine
+    global tag
+
+def buildDependancies():
+    #todo build dependancies
+    global tag
+
+def restartService():
+    #retart the applciation on the machine
+    global tag
