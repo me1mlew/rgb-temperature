@@ -1,7 +1,8 @@
 {
     "project":"rgb-temperature",
-    "host":"raspberrypi",
-    "user":"pi",
     "projectDir" : "/usr/local/bin/",
-    "repo":"https://github.com/me1mlew/rgb-temperature.git"
+    "repo":"https://github.com/me1mlew/rgb-temperature.git",
+    "entry":"rgb-temperature.py",
+    "host":"raspberrypi",
+    "user":"pi"    
 }
