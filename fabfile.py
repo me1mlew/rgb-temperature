@@ -51,7 +51,7 @@ def checkRemoteMachine():
     exists = c.run("[ -d {}{} ] && echo 'True' || echo 'False'".format(project_dir,project)).stdout.strip()
 
     if(exists == 'False'):
-        c.sudo("mkdir {}".format(project_dir))
+        #c.sudo("mkdir {}".format(project_dir))
         with c.cd(project_dir):
                 c.run("git clone {}".format(config['repo']))
             
