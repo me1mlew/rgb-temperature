@@ -17,10 +17,11 @@ c.config.run['replace_env'] = False
 detailedTag = c.local('git describe --tags',hide=True)
 tag = float(detailedTag.stdout[1:4].strip())
 
+#must be run ono command line
 @task
 def commit(arg):
 	c.local('pipreqs --force .')
-	c.local('git add -p')
+	c.local('git add .')
 	c.local('git commit')
 	c.local('git push')
 
