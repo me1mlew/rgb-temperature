@@ -10,6 +10,7 @@ with open('project-info.json',encoding = 'UTF-8') as f:
 
 project_dir = config['projectDir']
 project = config['project']
+repo = config['repo']
 
 c = Connection(config["host"],config["user"])
 c.config.run['replace_env'] = False
@@ -30,6 +31,9 @@ def commit(arg):
 def release(arg):
     iterateTag(0.1)
     checkRemoteMachine()
+    checkoutTag()
+    buildDependancies()
+    restartService()
     
 @task
 def release_major(arg):
@@ -51,9 +55,7 @@ def checkRemoteMachine():
     exists = c.run("[ -d {}{} ] && echo 'True' || echo 'False'".format(project_dir,project)).stdout.strip()
 
     if(exists == 'False'):
-        #c.sudo("mkdir {}".format(project_dir))
-        with c.cd(project_dir):
-                c.run("git clone {}".format(config['repo']))
+        c.sudo('bash -c "cd {} && git clone {}"'.format(project_dir,repo))
             
 def checkoutTag():
     with c.cd("{}{}".format(project_dir,project)):
