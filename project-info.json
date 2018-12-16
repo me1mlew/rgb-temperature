@@ -1,4 +1,5 @@
 {
+    "exec":"python",
     "project":"rgb-temperature",
     "projectDir" : "/usr/local/bin/",
     "repo":"https://github.com/me1mlew/rgb-temperature.git",

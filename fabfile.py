@@ -12,12 +12,13 @@ project_dir = config['projectDir']
 project = config['project']
 repo = config['repo']
 entryPoint = config['entry']
+execBin = config['exec']
 
 c = Connection(config["host"],config["user"])
 c.config.run['replace_env'] = False
 
 detailedTag = c.local('git describe --tags',hide=True)
-tag = float(detailedTag.stdout[1:4].strip())
+tag = float(detailedTag.stdout[1:3].strip())
 
 #must be run ono command line
 @task
@@ -28,6 +29,7 @@ def commit(arg):
 	c.local('git push')
 
 #end setup
+
 @task
 def release(arg):
     iterateTag(0.1)
@@ -71,4 +73,4 @@ def buildDependancies():
     c.sudo('bash -c "cd {} && pip install -r requirements.txt"'.format(project_dir+project))
 
 def restartService():
-    c.run("python {}{}/{}".format(project_dir,project,entryPoint))
+    c.run("{} {}{}/{}".format(execBin,project_dir,project,entryPoint))
