@@ -17,8 +17,8 @@ execBin = config['exec']
 c = Connection(config["host"],config["user"])
 c.config.run['replace_env'] = False
 
-detailedTag = c.local('git describe --tags',hide=True)
-tag = float(detailedTag.stdout[1:3].strip())
+detailedTag = c.local('git describe --tags',hide=True).stdout.strip()
+tag = detailedTag[:detailedTag.find('-')]
 
 #must be run ono command line
 @task
