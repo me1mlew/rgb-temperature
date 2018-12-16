@@ -11,6 +11,7 @@ with open('project-info.json',encoding = 'UTF-8') as f:
 project_dir = config['projectDir']
 project = config['project']
 repo = config['repo']
+entryPoint = config['entry']
 
 c = Connection(config["host"],config["user"])
 c.config.run['replace_env'] = False
@@ -30,6 +31,7 @@ def commit(arg):
 @task
 def release(arg):
     iterateTag(0.1)
+    createNewTag()
     checkRemoteMachine()
     checkoutTag()
     buildDependancies()
@@ -38,7 +40,12 @@ def release(arg):
 @task
 def release_major(arg):
     iterateTag(1.0)
-
+    createNewTag()
+    checkRemoteMachine()
+    checkoutTag()
+    buildDependancies()
+    restartService()
+    
 def iterateTag(step):
     global tag 
     print("Current verion: v" + str(tag))
@@ -47,8 +54,8 @@ def iterateTag(step):
 
 def createNewTag():
     global tag
-    c.local('git tag ' + tag)
-    c.local('git push origin' + tag)
+    c.local('git tag {}'.format(str(tag)))
+    c.local('git push origin {}'.format(str(tag)))
 
 def checkRemoteMachine():
     global tag
@@ -58,13 +65,10 @@ def checkRemoteMachine():
         c.sudo('bash -c "cd {} && git clone {}"'.format(project_dir,repo))
             
 def checkoutTag():
-    with c.cd("{}{}".format(project_dir,project)):
-        c.run("git checkout tags/v{}".format(str(tag)))
-
+    c.sudo('bash -c "cd {} && git fetch && git checkout tags/{}"'.format(project_dir+project,tag))
 
 def buildDependancies():
-	with c.cd("{}{}".format(project_dir,project)):
-		c.run("pip install -r requirements.txt")
+    c.sudo('bash -c "cd {} && pip install -r requirements.txt"'.format(project_dir+project))
 
 def restartService():
-    c.run("{}".format(config['entry']))
+    c.run("python {}{}/{}".format(project_dir,project,entryPoint))
