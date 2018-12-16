@@ -1,0 +1,6 @@
+{
+    "bulbs":[
+        {"location":"FRONT_BEDROOM","id":"ABC123"},
+        {"location":"LIVING_ROOM","id":"XYZ456"}
+    ]
+}

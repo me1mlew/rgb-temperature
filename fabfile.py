@@ -8,11 +8,11 @@ import json
 with open('project-info.json',encoding = 'UTF-8') as f:
         config = json.loads(f.read(),encoding='utf-8')
 
-project_dir = config['projectDir']
-project = config['project']
-repo = config['repo']
-entryPoint = config['entry']
-execBin = config['exec']
+PROJECT_DIR = config['projectDir']
+PROJECT = config['project']
+REPO = config['repo']
+ENTRY_POINT = config['entry']
+EXEC_BIN = config['exec']
 
 c = Connection(config["host"],config["user"])
 c.config.run['replace_env'] = False
@@ -61,16 +61,16 @@ def createNewTag():
 
 def checkRemoteMachine():
     global tag
-    exists = c.run("[ -d {}{} ] && echo 'True' || echo 'False'".format(project_dir,project)).stdout.strip()
+    exists = c.run("[ -d {}{} ] && echo 'True' || echo 'False'".format(PROJECT_DIR,PROJECT)).stdout.strip()
 
     if(exists == 'False'):
-        c.sudo('bash -c "cd {} && git clone {}"'.format(project_dir,repo))
+        c.sudo('bash -c "cd {} && git clone {}"'.format(PROJECT_DIR,REPO))
             
 def checkoutTag():
-    c.sudo('bash -c "cd {} && git fetch && git checkout tags/{}"'.format(project_dir+project,tag))
+    c.sudo('bash -c "cd {} && git fetch && git checkout tags/{}"'.format(PROJECT_DIR+PROJECT,tag))
 
 def buildDependancies():
-    c.sudo('bash -c "cd {} && pip install -r requirements.txt"'.format(project_dir+project))
+    c.sudo('bash -c "cd {} && pip install -r requirements.txt"'.format(PROJECT_DIR+PROJECT))
 
 def restartService():
-    c.run("{} {}{}/{}".format(execBin,project_dir,project,entryPoint))
+    c.run("{} {}{}/{}".format(EXEC_BIN,PROJECT_DIR,PROJECT,ENTRY_POINT))
