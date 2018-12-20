@@ -2,6 +2,9 @@ import paho.mqtt.client as mqtt
 import time
 import yeelight as yee
 import json
+import os
+
+script_dir = os.path.dirname(__file__)
 
 #app parameters
 SAMPLE_RATE = 30
@@ -13,7 +16,7 @@ client = mqtt.Client('rgb-bulb-controll er')
 client.connect("raspberrypi")
 client.subscribe("sensors/temp")
 
-with open('bulb-locations.json') as f:
+with open(os.path.join(script_dir, 'bulb-locations.json')) as f:
     bulb_locations = json.loads(f.read())
 
 for bulb_location in bulb_locations:
