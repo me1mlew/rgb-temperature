@@ -1,6 +1,4 @@
-{
-    "bulbs":[
-        {"location":"FRONT_BEDROOM","id":"ABC123"},
-        {"location":"LIVING_ROOM","id":"XYZ456"}
-    ]
-}
+[
+    {"location":"FRONT_BEDROOM","id":"0x00000000049e55ce"},
+    {"location":"LIVING_ROOM","id":"XYZ456"}
+]
