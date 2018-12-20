@@ -70,6 +70,8 @@ def checkRemoteMachine():
         c.sudo('bash -c "cd {} && git clone {}"'.format(PROJECT_DIR,REPO))
             
 def checkoutTag():
+	#kill the process
+    c.run('pkill -9 -f {}'.format(ENTRY_POINT))
     c.sudo('bash -c "cd {} && git fetch --prune origin "+refs/tags/*:refs/tags/*" && git reset --hard {}"'.format(PROJECT_DIR+PROJECT,tag))
 
 def buildDependancies():

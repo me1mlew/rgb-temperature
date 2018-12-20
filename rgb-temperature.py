@@ -3,6 +3,7 @@ import time
 import yeelight as yee
 import json
 import os
+import random
 
 script_dir = os.path.dirname(__file__)
 
@@ -39,11 +40,10 @@ client.on_message=on_message
 client.loop_start()
 
 bulb = getBulb()
-
-bulb.set_rgb(50,64,10)
 #end
 
 while True:
     #send a messagee to all temperature sensors
     client.publish(TOPIC,"publish")
+    bulb.set_rgb(random.randint(0,255),random.randint(0,255),random.randint(0,255))
     time.sleep(SAMPLE_RATE)
