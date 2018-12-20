@@ -50,7 +50,7 @@ def release_major(arg):
     restartService()
     
 def iterateTag(step):
-    global tag 
+    global tag
     print("Current verion: v" + str(tag))
     tag += step
     if step == 1:
@@ -70,7 +70,7 @@ def checkRemoteMachine():
         c.sudo('bash -c "cd {} && git clone {}"'.format(PROJECT_DIR,REPO))
             
 def checkoutTag():
-    c.sudo('bash -c "cd {} && git fetch && git checkout tags/{}"'.format(PROJECT_DIR+PROJECT,tag))
+    c.sudo('bash -c "cd {} && git fetch --prune origin "+refs/tags/*:refs/tags/*" && git reset --hard {}"'.format(PROJECT_DIR+PROJECT,tag))
 
 def buildDependancies():
     c.sudo('bash -c "cd {} && pip install -r requirements.txt"'.format(PROJECT_DIR+PROJECT))
