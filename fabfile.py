@@ -2,6 +2,7 @@
 from __future__ import with_statement
 from fabric import *
 import json
+import math
 
 #setup
 
@@ -18,9 +19,9 @@ c = Connection(config["host"],config["user"])
 c.config.run['replace_env'] = False
 
 detailedTag = c.local('git describe --tags',hide=True).stdout.strip()
-tag = detailedTag[:detailedTag.find('-')]
+tag = float(detailedTag[:detailedTag.find('-')])
 
-#must be run ono command line
+#must be run on command line
 @task
 def commit(arg):
 	c.local('pipreqs --force .')
@@ -52,6 +53,8 @@ def iterateTag(step):
     global tag 
     print("Current verion: v" + str(tag))
     tag += step
+    if step == 1:
+        tag = math.floor(tag,2)
     print("Upgrading to version: v" + str(tag))
 
 def createNewTag():

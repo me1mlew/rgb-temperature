@@ -13,8 +13,8 @@ client = mqtt.Client('rgb-bulb-controll er')
 client.connect("raspberrypi")
 client.subscribe("sensors/temp")
 
-with open('bulb-locations.json',encoding = 'UTF-8') as f:
-    bulb_locations = json.loads(f.read(),encoding='utf-8')
+with open('bulb-locations.json') as f:
+    bulb_locations = json.loads(f.read())
 
 for bulb_location in bulb_locations:
     if bulb_location['location'] == BULB_LOCATION:
