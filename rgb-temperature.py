@@ -8,9 +8,13 @@ import random
 script_dir = os.path.dirname(__file__)
 
 #app parameters
-SAMPLE_RATE = 30
+SAMPLE_RATE = 5
 TOPIC = "sensors/temp"
-BULB_LOCATION="FRONT_BEDROOM"
+BULB_LOCATION = "FRONT_BEDROOM"
+
+TARGET_TEMP = 21
+MIN_TEMP = 19.5
+MAX_TEMP = 22.5
 
 #MQTT setup and subscription
 client = mqtt.Client('rgb-bulb-controll er')
@@ -31,10 +35,12 @@ def getBulb():
            return yee.Bulb(bulb_meta['ip'])
 
 def on_message(client, userdata, message):
-    print("message received " ,str(message.payload.decode("utf-8")))
-    print("message topic=",message.topic)
-    print("message qos=",message.qos)
-    print("message retain flag=",message.retain)
+    tempProbe = json.loads(str(message.payload.decode("utf-8")))
+    print(tempProbe['temp'])
+    print(tempProbe['id'])
+    
+def setBulbColour(temp):
+    print("colour")
 
 client.on_message=on_message
 client.loop_start()
@@ -45,5 +51,4 @@ bulb = getBulb()
 while True:
     #send a messagee to all temperature sensors
     client.publish(TOPIC,"publish")
-    bulb.set_rgb(random.randint(0,255),random.randint(0,255),random.randint(0,255))
     time.sleep(SAMPLE_RATE)

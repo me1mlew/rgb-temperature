@@ -71,8 +71,12 @@ def checkRemoteMachine():
             
 def checkoutTag():
 	#kill the process
-    c.run('pkill -9 -f {}'.format(ENTRY_POINT))
-    c.sudo('bash -c "cd {} && git fetch --prune origin "+refs/tags/*:refs/tags/*" && git reset --hard {}"'.format(PROJECT_DIR+PROJECT,tag))
+	exists = c.run("if [[ $(ps -ef | grep -c {})  -ne 1 ]]; then echo 'True'; else echo 'False';  fi".format(ENTRY_POINT))
+	
+	if(exists == 'True'):
+		c.run('pkill -9 -f {}'.format(ENTRY_POINT))
+		
+	c.sudo('bash -c "cd {} && git fetch --prune origin "+refs/tags/*:refs/tags/*" && git reset --hard {}"'.format(PROJECT_DIR+PROJECT,tag))
 
 def buildDependancies():
     c.sudo('bash -c "cd {} && pip install -r requirements.txt"'.format(PROJECT_DIR+PROJECT))
