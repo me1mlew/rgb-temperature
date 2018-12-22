@@ -19,7 +19,7 @@ c = Connection(config["host"],config["user"])
 c.config.run['replace_env'] = False
 
 detailedTag = c.local('git describe --tags',hide=True).stdout.strip()
-tag = float(detailedTag[:detailedTag.find('-')])
+tag = float(detailedTag)
 
 #must be run on command line
 @task
@@ -54,7 +54,7 @@ def iterateTag(step):
     print("Current verion: v" + str(tag))
     tag += step
     if step == 1:
-        tag = math.floor(tag,2)
+        tag = math.floor(tag)
     print("Upgrading to version: v" + str(tag))
 
 def createNewTag():

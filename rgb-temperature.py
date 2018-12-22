@@ -11,10 +11,13 @@ script_dir = os.path.dirname(__file__)
 SAMPLE_RATE = 5
 TOPIC = "sensors/temp"
 LOCATION = "FRONT_BEDROOM"
+BRIGHTNESS = 5
 
 TARGET_TEMP = 21
 MIN_TEMP = 19.5
 MAX_TEMP = 22.5
+
+bulb_connected = False
 
 #MQTT setup and subscription
 client = mqtt.Client('rgb-bulb-controller')
@@ -38,18 +41,30 @@ for sensor_location in sensor_locations:
 
 #bulb discovery
 def getBulb():
-    print(yee.discover_bulbs())
-    for bulb_meta in yee.discover_bulbs():
-        if bulb_meta['capabilities']['id'] == bulb_id:
-           return yee.Bulb(bulb_meta['ip'])
+    global bulb_connected
+    
+    if (len(yee.discover_bulbs())):
+        for bulb_meta in yee.discover_bulbs():
+            if bulb_meta['capabilities']['id'] == bulb_id:
+                bulb_connected = True
+                bulb = yee.Bulb(bulb_meta['ip'])
+                bulb.set_brightness(BRIGHTNESS)
+                return bulb
+    else:
+        bulb_connected = False
+        print("unable to connect to bulb... Retrying!..")
+        time.sleep(10)
+        return getBulb()
 
 def on_message(client, userdata, message):
+    global bulb
+
     tempProbe = json.loads(str(message.payload.decode("utf-8")))
 
     print(tempProbe['temp'])
 
     if (tempProbe['id']==sensor_id):
-        setBulbColour(tempProbe['temp'])
+            setBulbColour(tempProbe['temp'])
     
 def setBulbColour(temp):
     if (temp>MAX_TEMP):
@@ -63,9 +78,7 @@ def setBulbColour(temp):
         bulb.set_rgb(tone,tone,255)
     else:
         print("Perfect!")
-        bulb.set_rgb(255,160,160)   
-
-     
+        bulb.set_rgb(255,160,160)        
 
 def getPercentage(target,actual):
     difference = math.fabs(float(target)-float(actual))
@@ -78,10 +91,10 @@ client.on_message=on_message
 client.loop_start()
 
 bulb = getBulb()
-bulb.set_brightness(5)
 #end
 
 while True:
     #send a messagee to all temperature sensors asking them to publish
-    client.publish(TOPIC,"publish")
+    if (bulb_connected):
+        client.publish(TOPIC,"publish")
     time.sleep(SAMPLE_RATE)
