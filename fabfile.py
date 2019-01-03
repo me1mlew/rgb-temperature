@@ -18,8 +18,7 @@ EXEC_BIN = config['exec']
 c = Connection(config["host"],config["user"])
 c.config.run['replace_env'] = False
 
-detailedTag = c.local('git describe --tags',hide=True).stdout.strip()
-tag = float(detailedTag)
+tag = 0
 
 #must be run on command line
 @task
@@ -28,6 +27,7 @@ def commit(arg):
 	c.local('git add .')
 	c.local('git commit')
 	c.local('git push')
+	exit()
 
 #end setup
 
@@ -50,12 +50,16 @@ def release_major(arg):
     restartService()
     
 def iterateTag(step):
-    global tag
-    print("Current verion: v" + str(tag))
-    tag += step
-    if step == 1:
-        tag = math.floor(tag)
-    print("Upgrading to version: v" + str(tag))
+	global tag
+
+	detailedTag = c.local('git describe --tags',hide=True).stdout.strip()
+	tag = float(detailedTag[:detailedTag.find('-')])
+
+	print("Current verion: v" + str(tag))
+	tag += step
+	if step == 1:
+		tag = math.floor(tag)
+	print("Upgrading to version: v" + str(tag))
 
 def createNewTag():
     global tag
@@ -74,6 +78,7 @@ def checkoutTag():
 	exists = c.run("if [[ $(ps -ef | grep -c {})  -ne 1 ]]; then echo 'True'; else echo 'False';  fi".format(ENTRY_POINT))
 	
 	if(exists == 'True'):
+		print("Killing current process '{}'".format(ENTRY_POINT))
 		c.run('pkill -9 -f {}'.format(ENTRY_POINT))
 		
 	c.sudo('bash -c "cd {} && git fetch --prune origin "+refs/tags/*:refs/tags/*" && git reset --hard {}"'.format(PROJECT_DIR+PROJECT,tag))
@@ -82,4 +87,6 @@ def buildDependancies():
     c.sudo('bash -c "cd {} && pip install -r requirements.txt"'.format(PROJECT_DIR+PROJECT))
 
 def restartService():
-    c.run("{} {}{}/{}".format(EXEC_BIN,PROJECT_DIR,PROJECT,ENTRY_POINT))
+	print("Running '{}'".format(ENTRY_POINT))
+	c.run("{} {}{}/{}".format(EXEC_BIN,PROJECT_DIR,PROJECT,ENTRY_POINT))
+	exit()
