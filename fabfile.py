@@ -58,7 +58,7 @@ def iterateTag(step):
 	print("Current verion: v" + str(tag))
 	tag += step
 	if step == 1:
-		tag = math.floor(tag)
+		tag = round(math.floor(tag),2)
 	print("Upgrading to version: v" + str(tag))
 
 def createNewTag():

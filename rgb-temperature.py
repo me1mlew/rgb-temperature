@@ -13,9 +13,9 @@ TOPIC = "sensors/temp"
 LOCATION = "FRONT_BEDROOM"
 BRIGHTNESS = 5
 
-TARGET_TEMP = 21
-MIN_TEMP = 19.5
-MAX_TEMP = 22.5
+TARGET_TEMP = 18.5
+MIN_TEMP = 17   
+MAX_TEMP = 20
 
 bulb_connected = False
 
@@ -95,6 +95,6 @@ bulb = getBulb()
 
 while True:
     #send a messagee to all temperature sensors asking them to publish
-    if (bulb_connected):
+    if (len(bulb._ip)):
         client.publish(TOPIC,"publish")
     time.sleep(SAMPLE_RATE)
